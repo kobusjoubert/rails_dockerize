@@ -1,0 +1,79 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14.3-alpine
+    environment:
+      POSTGRES_DB: rails_dockerize_development
+      POSTGRES_USER: rails_dockerize
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
+
+  redis:
+    image: redis:7.0.0-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - '6380:6379'
+
+  rails:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      PORT: 3000
+      RAILS_ENV: development
+      RAILS_MAX_THREADS: 5
+      RAILS_MIN_THREADS: 5
+      REDIS_URL: 'redis://redis:6379/0'
+      WEB_CONCURRENCY: 0
+      MALLOC_ARENA_MAX: 2
+      OVERMIND_NO_PORT: 1
+      OVERMIND_SOCKET: tmp/sockets/overmind.sock
+      PIDFILE: tmp/pids/server.pid
+      RAILS_DOCKERIZE_DATABASE_HOST: postgres
+      RAILS_DOCKERIZE_DATABASE_PORT: 5432
+      RAILS_DOCKERIZE_DATABASE_USER: rails_dockerize
+    entrypoint: ["/home/app/docker-entrypoint.sh"]
+    command: bin/dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/home/app
+      - gem_cache_rails:/usr/local/bundle/gems
+    ports:
+      - '3001:3000'
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres_data:
+  redis_data:
+  gem_cache_rails:
+
+# networks:
+#   default:
+#     name: rails_dockerize
+
+# gem_cache named volume:
+#
+# When the bundle install instruction runs in the container, it will install the project gems. Adding this volume means that if you recreate the container, the
+# gems will be mounted to the new container. This mount presumes that there haven’t been any changes to the project, so if you do make changes to your project
+# gems in development, you will need to remember to delete this volume before recreating your application service.
+# [https://www.digitalocean.com/community/tutorials/containerizing-a-ruby-on-rails-application-for-development-with-docker-compose]
+#
+# Run after making changes to Gemfile.
+#
+#   docker compose down
+#   docker volume ls
+#   docker volume rm rails_dockerize_gem_cache_rails
+#   docker compose up
+#
+# Setting this environment variable to a sensible default to prevent Sidekiq or Puma from using too much memory using multiple threads. If jemalloc is not
+# installed, the default malloc will be used which uses this environment variable.
+#
+#   MALLOC_ARENA_MAX: 2

@@ -51,6 +51,36 @@ gem "bootsnap", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
+# Nokogiri.
+#
+# For a faster more reliable installation. "Native gems" contain pre-compiled libraries for a specific machine architecture. On supported platforms, this
+# removes the need for compiling the C extension and the packaged libraries, or for system dependencies to exist. This results in much faster installation and
+# more reliable installation, which as you probably know are the biggest headaches for Nokogiri users.
+# [https://nokogiri.org/tutorials/installing_nokogiri.html#installing-using-the-packaged-libraries]
+#
+# As of v1.11.0, Nokogiri ships pre-compiled, "native" gems for the following platforms:
+#
+#   - Linux: x86-linux and x86_64-linux (req: glibc >= 2.17), including musl platforms like Alpine
+#   - Darwin/MacOS: x86_64-darwin and arm64-darwin
+#   - Windows: x86-mingw32 and x64-mingw32
+#   - Java: any platform running JRuby 9.2 or higher
+#
+# If you're on a supported platform, either gem install or bundle install should install a native gem without any additional action on your part.
+#
+# If you're using Bundler v2.2+, check that your lockfile knows about your platform(s). For example, if you develop on macOS and deploy to Linux you will need
+# to run these commands in your development environment:
+#
+#   bundle lock --add-platform x86_64-linux
+#
+# Add support for the required platforms locally and for production.
+#
+#   bundle lock --add-platform x86_64-linux-musl
+#   bundle lock --add-platform x86_64-darwin-20
+#   bundle lock --add-platform aarch64-linux-musl
+#   bundle lock --add-platform arm64-darwin-21
+#   bundle package --all-platforms
+gem "nokogiri"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
