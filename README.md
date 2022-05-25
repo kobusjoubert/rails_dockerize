@@ -18,11 +18,10 @@ View the logs.
 
     docker compose logs -f
 
-Add `debugger` on a line you would like to debug, then connect to a Procfile process tmux window. Disconnect from the window with `ctrl + b`, `d`.
+Add `debugger` on a line you would like to debug, then attach to a container to investigate. Detach from the container with `ctrl + p`, `ctrl + q`.
 
-    docker compose exec rails bash
-    overmind c web
-    overmind c worker
+    docker container ls
+    docker attach rails_dockerize-rails-1
 
 To run any of the Rails commands, you'll have to prepend `docker compose run --rm rails` to the command.
 
@@ -54,3 +53,19 @@ To build or rebuild your Docker image after `Dockerfile` or `Gemfile` updates.
     docker volume ls
     docker volume rm rails_dockerize_gem_cache_rails
     docker compose build rails
+
+## Files
+
+These are the files of interest that need to be added or altered.
+
+- [Dockerfile](Dockerfile)
+- [docker-compose.yml](docker-compose.yml)
+- [docker-entrypoint.sh](docker-entrypoint.sh)
+- [.dockerignore](.dockerignore)
+- [Gemfile](Gemfile)
+- [Procfile.dev](Procfile.dev)
+- [bin/setup](bin/setup)
+- [bin/dev](bin/dev)
+- [config/cable.yml](config/cable.yml)
+- [config/database.yml](config/database.yml)
+- [.env.template](.env.template)

@@ -1,5 +1,6 @@
 # Dockerfile best practices. [https://lipanski.com/posts/dockerfile-ruby-best-practices]
-FROM ruby:3.1.2-alpine AS base
+ARG RUBY_VERSION=3.0
+FROM ruby:$RUBY_VERSION-alpine AS base
 
 # Install system dependencies required both at runtime and build time.
 #
@@ -15,7 +16,8 @@ FROM ruby:3.1.2-alpine AS base
 RUN apk update && apk add --no-cache --update postgresql-dev tzdata curl screen htop vim git bash yarn imagemagick gcompat tmux
 
 # Match Gemfile.lock 'BUNDLED WITH' version.
-RUN gem install bundler:2.3.13
+ARG BUNDLER_VERSION=2.3
+RUN gem install bundler:$BUNDLER_VERSION
 
 # This stage is responsible for installing overmind in favour of foreman.
 # [https://github.com/DarthSim/overmind#build-overmind-from-source]
