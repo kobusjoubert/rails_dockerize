@@ -1,0 +1,11 @@
+development:
+  sidekiq:
+    url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/0" } %>
+
+test:
+  sidekiq:
+    url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/0" } %>
+
+production:
+  sidekiq:
+    url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/0" } %>

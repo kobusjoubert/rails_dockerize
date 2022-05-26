@@ -52,7 +52,7 @@ To build or rebuild your Docker image after `Dockerfile` or `Gemfile` updates.
 
     docker volume ls
     docker volume rm rails_dockerize_gem_cache_rails
-    docker compose build rails
+    docker compose build
 
 ## Files
 
