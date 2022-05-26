@@ -15,6 +15,17 @@ RUN apk update && apk add --no-cache --update postgresql-dev tzdata curl screen 
 ARG BUNDLER_VERSION=2.3
 RUN gem install bundler:$BUNDLER_VERSION
 
+# This stage is responsible for installing jemalloc in favour of malloc.
+# [https://github.com/docker-library/ruby/issues/182#issuecomment-939047364]
+# [https://devcenter.heroku.com/changelog-items/1683]
+FROM base AS jemalloc
+RUN apk add --no-cache --update build-base
+RUN wget -O - https://github.com/jemalloc/jemalloc/releases/download/5.2.1/jemalloc-5.2.1.tar.bz2 | tar -xj && \
+  cd jemalloc-5.2.1 && \
+  ./configure && \
+  make && \
+  make install
+
 # This stage will be responsible for installing gems.
 FROM base AS dependencies
 
@@ -41,6 +52,16 @@ USER app
 # Set the base directory that will be used from now on.
 # We'll install the app in this directory.
 WORKDIR /home/app
+
+# Copy over jemalloc from the jemalloc stage.
+COPY --from=jemalloc /usr/local/lib/libjemalloc.so.2 /usr/local/lib/
+
+# Inject jemalloc to transparently replace the system malloc with jemalloc without Ruby being aware of this. Any invocation inside your container (be it the
+# entrypoint or a command) will be enhanced by jemalloc.
+ENV LD_PRELOAD=libjemalloc.so.2
+
+# If there is any output from this command, jemalloc installed correctly.
+# RUN MALLOC_CONF=stats_print:true ruby -e "exit"
 
 # Copy over gems from the dependencies stage.
 COPY --from=dependencies /usr/local/bundle/ /usr/local/bundle/
