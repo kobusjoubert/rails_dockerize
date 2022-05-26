@@ -9,22 +9,11 @@ FROM ruby:$RUBY_VERSION-alpine AS base
 #   LoadError: Error loading shared library ld-linux-aarch64.so.1: No such file or directory.
 #   [https://nokogiri.org/tutorials/installing_nokogiri.html#linux-musl-error-loading-shared-library]
 #   [https://wiki.alpinelinux.org/wiki/Running_glibc_programs]
-#
-# tmux
-#
-#   Used by overmind to connect to any process, which we'll use when debugging. [https://developers.forem.com/getting-started/start-app]
-RUN apk update && apk add --no-cache --update postgresql-dev tzdata curl screen htop vim git bash yarn imagemagick gcompat tmux
+RUN apk update && apk add --no-cache --update postgresql-dev tzdata curl screen htop vim git bash yarn imagemagick gcompat
 
 # Match Gemfile.lock 'BUNDLED WITH' version.
 ARG BUNDLER_VERSION=2.3
 RUN gem install bundler:$BUNDLER_VERSION
-
-# This stage is responsible for installing overmind in favour of foreman.
-# [https://github.com/DarthSim/overmind#build-overmind-from-source]
-# [https://github.com/DarthSim/overmind]
-FROM base AS overmind
-RUN apk add --no-cache --update go
-RUN GO111MODULE=on go install github.com/DarthSim/overmind@v2
 
 # This stage will be responsible for installing gems.
 FROM base AS dependencies
@@ -52,9 +41,6 @@ USER app
 # Set the base directory that will be used from now on.
 # We'll install the app in this directory.
 WORKDIR /home/app
-
-# Copy over overmind from the overmind stage.
-COPY --from=overmind /root/go/bin/overmind /usr/local/bin/
 
 # Copy over gems from the dependencies stage.
 COPY --from=dependencies /usr/local/bundle/ /usr/local/bundle/
