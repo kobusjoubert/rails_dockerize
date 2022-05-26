@@ -26,7 +26,7 @@ x-app: &app
   tty: true
   volumes:
     - .:/home/app
-    - gem_cache_rails:/usr/local/bundle/gems
+    - gem_cache:/usr/local/bundle/gems
   depends_on:
     - postgres
     - redis
@@ -67,7 +67,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
-  gem_cache_rails:
+  gem_cache:
 
 # networks:
 #   default:
@@ -84,7 +84,8 @@ volumes:
 #
 #   docker compose down
 #   docker volume ls
-#   docker volume rm rails_dockerize_gem_cache_rails
+#   docker volume rm rails_dockerize_gem_cache
+#   docker compose build
 #   docker compose up
 #
 # Setting this environment variable to a sensible default to prevent Sidekiq or Puma from using too much memory using multiple threads. If jemalloc is not

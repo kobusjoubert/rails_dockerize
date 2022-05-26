@@ -51,7 +51,7 @@ To upgrade Rails, in `Gemfile` change `gem 'rails', '~> 7.0.0'`.
 To build or rebuild your Docker image after `Dockerfile` or `Gemfile` updates.
 
     docker volume ls
-    docker volume rm rails_dockerize_gem_cache_rails
+    docker volume rm rails_dockerize_gem_cache
     docker compose build
 
 ## Files
@@ -69,3 +69,9 @@ These are the files of interest that need to be added or altered.
 - [config/cable.yml](config/cable.yml)
 - [config/database.yml](config/database.yml)
 - [.env.template](.env.template)
+
+## Issues
+
+If you run into this error when running `docker compose up`, just run `docker compose up` again. I need to find a way around this. 🤔
+
+    Error response from daemon: failed to mkdir /var/lib/docker/volumes/rails_dockerize_bundle/_data/actionmailer-7.0.3/lib/action_mailer: mkdir /var/lib/docker/volumes/rails_dockerize_bundle/_data/actionmailer-7.0.3/lib/action_mailer: file exists
