@@ -4,6 +4,7 @@ x-app: &app
   build:
     context: .
     dockerfile: Dockerfile.dev
+    target: development
     args:
       RUBY_VERSION: 3.1.2
       BUNDLER_VERSION: 2.3.13

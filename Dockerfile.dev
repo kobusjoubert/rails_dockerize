@@ -32,14 +32,22 @@ FROM base AS dependencies
 # Install system dependencies required to build some Ruby gems (pg).
 RUN apk add --update build-base
 
+# This stage will be responsible for installing gems for development.
+FROM dependencies AS development-dependencies
+
 # Copying these files as an independent step, followed by bundle install, means that the project gems do not need to be rebuilt every time you make changes to
 # your application code. This will work in conjunction with the gem_cache volumes that we will include in our docker-compose.yml file, which will mount gems to
 # your application container in cases where the service is recreated but project gems remain the same.
 COPY Gemfile Gemfile.lock ./
 RUN bundle check || bundle install --jobs=2 --retry=3
 
+# This stage will be responsible for installing gems for production.
+FROM dependencies AS production-dependencies
+COPY Gemfile Gemfile.lock ./
+RUN bundle config set --local without 'development test' && bundle install --jobs=2 --retry=3
+
 # Runtime.
-FROM base
+FROM base AS runtime
 
 # Create a non-root user to run the app and own app-specific files.
 RUN adduser --disabled-password app
@@ -63,9 +71,6 @@ ENV LD_PRELOAD=libjemalloc.so.2
 # If there is any output from this command, jemalloc installed correctly.
 # RUN MALLOC_CONF=stats_print:true ruby -e "exit"
 
-# Copy over gems from the dependencies stage.
-COPY --from=dependencies /usr/local/bundle/ /usr/local/bundle/
-
 # Finally, copy over the code.
 COPY --chown=app . ./
 
@@ -79,3 +84,15 @@ EXPOSE 3000
 
 # Configure the main process to run when running the image.
 CMD ["bin/rails", "server", "-b", "0.0.0.0"]
+
+# Development.
+FROM runtime AS development
+
+# Copy over gems from the development-dependencies stage.
+COPY --from=development-dependencies /usr/local/bundle/ /usr/local/bundle/
+
+# Production.
+FROM runtime AS production
+
+# Copy over gems from the production-dependencies stage.
+COPY --from=production-dependencies /usr/local/bundle/ /usr/local/bundle/
