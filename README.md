@@ -48,11 +48,17 @@ To upgrade Rails, in `Gemfile` change `gem 'rails', '~> 7.0.0'`.
 
 ## Build
 
+### Development
+
 To build or rebuild your Docker image after `Dockerfile` or `Gemfile` updates.
 
     docker volume ls
     docker volume rm rails_dockerize_gem_cache
     docker compose build
+
+### Production
+
+    docker build --build-arg RUBY_VERSION=3.1.2 --build-arg BUNDLER_VERSION=2.3.13 --file Dockerfile --tag rails_dockerize_production --target production .
 
 ## Files
 
@@ -70,7 +76,7 @@ These are the files of interest that need to be added or altered.
 - [config/database.yml](config/database.yml)
 - [.env.template](.env.template)
 
-## Issues
+## Known Issues
 
 If you run into this error when running `docker compose up`, just run `docker compose up` again. I need to find a way around this. 🤔
 
