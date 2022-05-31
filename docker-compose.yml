@@ -25,6 +25,7 @@ x-app: &app
   tty: true
   volumes:
     - .:/home/app
+    - node_modules:/home/app/node_modules
     - gem_cache:/usr/local/bundle/gems
   depends_on:
     - postgres
@@ -66,6 +67,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  node_modules:
   gem_cache:
 
 # networks:
