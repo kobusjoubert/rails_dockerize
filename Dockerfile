@@ -9,7 +9,7 @@ FROM ruby:$RUBY_VERSION-alpine AS base
 #   LoadError: Error loading shared library ld-linux-aarch64.so.1: No such file or directory.
 #   [https://nokogiri.org/tutorials/installing_nokogiri.html#linux-musl-error-loading-shared-library]
 #   [https://wiki.alpinelinux.org/wiki/Running_glibc_programs]
-RUN apk update && apk add --no-cache --update postgresql-dev tzdata curl screen htop vim git bash yarn imagemagick gcompat
+RUN apk update && apk add --no-cache --update postgresql-dev tzdata curl screen htop vim git bash yarn imagemagick vips gcompat
 
 # Match Gemfile.lock 'BUNDLED WITH' version.
 ARG BUNDLER_VERSION=2.3
