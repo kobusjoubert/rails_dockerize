@@ -10,6 +10,8 @@ Get your `master.key` file and put it in the `config` folder.
 
     docker compose run --rm rails -- bin/setup
 
+## Usage
+
 Run the application and access it on <http://localhost:3001>
 
     docker compose up -d
@@ -31,6 +33,12 @@ Or just connect to the container and then run any of the Rails commands.
 
     docker compose exec rails bash
     bin/rails c
+
+To run tests.
+
+    docker compose exec -e RAILS_ENV=test rails bash
+    bin/rubocop
+    bin/rspec
 
 Stop the application.
 
