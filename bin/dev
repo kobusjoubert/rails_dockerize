@@ -2,7 +2,7 @@
 
 if ! command -v overmind &> /dev/null
 then
-  echo "Please install overmind first using your package manager 'brew install overmind'"
+  echo "Please install overmind and tmux first using your package manager 'brew install tmux overmind'"
   exit
 fi
 
