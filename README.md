@@ -37,8 +37,7 @@ Or just connect to the container and then run any of the Rails commands.
 To run tests.
 
     docker compose exec -e RAILS_ENV=test rails bash
-    bin/rubocop
-    bin/rspec
+    bin/rails test
 
 Stop the application.
 
