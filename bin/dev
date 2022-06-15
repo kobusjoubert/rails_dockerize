@@ -6,4 +6,4 @@ then
   exit
 fi
 
-bin/dotenv -f '.env.development' overmind start -f Procfile.dev
+RAILS_ENV=development bin/dotenv -f '.env.development' overmind start -f Procfile.dev
