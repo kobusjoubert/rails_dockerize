@@ -47,7 +47,7 @@ Stop the application.
 
 To upgrade Rails, in `Gemfile` change `gem 'rails', '~> 7.0.0'`.
 
-    docker compose exec -u root rails bash
+    docker compose run --rm -u root rails bash
     git rm Gemfile.lock
     bundle install
     bin/rails app:update
